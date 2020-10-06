@@ -53,8 +53,8 @@ d3.json(
 
     let xScale = d3
       .scaleLinear()
-      .domain([d3.min(years), xMax + 1])
-      .range([0, width]);
+      .domain([d3.min(years)-1, xMax + 1])
+      .range([0, width-30]);
 
 
     let xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.format("d"));
@@ -71,7 +71,7 @@ d3.json(
       });
 
     //this is to scale the gdp on the yAxis
-    let yAxisScale = d3.scaleLinear().domain([d3.max(time), d3.min(time)]).range([height, 0]);
+    let yAxisScale = d3.scaleLinear().domain([d3.max(time), d3.min(time)]).range([height-6, 30]);
     // scaling the d3 yaxis to the scale we just made above
     let yAxis = d3.axisLeft().scale(yAxisScale);
 
@@ -106,7 +106,7 @@ d3.json(
       .attr('cy', function (d) {
         return yAxisScale(d.Time.replace(/:/g,'.'))
       })
-      .attr("r",8)
+      .attr("r",5)
       .style('fill', '#33adff')
       .attr('transform', 'translate(60, 0)')//pushes graph a little right
       .on('mouseover', function (d, i) {
