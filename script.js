@@ -9,92 +9,71 @@ let tooltip = d3
   .attr('id', 'tooltip')
   .style('opacity', 0);
 
-  //this is the white bar that covers the blue line your are on
+//this is the white bar that covers the blue line your are on
 let overlay = d3
   .select('.visHolder')
   .append('div')
   .attr('class', 'overlay')
   .style('opacity', 0);
 
-  //this is the main svg container
+//this is the main svg container
 let svgContainer = d3
   .select('.visHolder')
   .append('svg')
   .attr('width', width + 100)
   .attr('height', height + 60);
 
-  //here json will fetch data which it will pass into the function
+
 d3.json(
   'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json',//https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json
   function (data) {
-    
-    //adding the text for 'Gross Domestic Product'
+
+
     svgContainer
       .append('text')
       .attr('transform', 'rotate(-90)')
       .attr('x', -120)
       .attr('y', 80)
       .text('Time in Minutes');
-    
-      //adding text for more info at the bottom
+
+
     svgContainer
       .append('text')
-      .attr('x', width / 2 )
+      .attr('x', width / 2)
       .attr('y', height + 60)
       .text('More Information: https://en.wikipedia.org/wiki/Doping_at_the_Tour_de_France')
       .attr('class', 'info');
-    
-     
-    let years = data.map(function (item) {
-      return item.Year;  
-    });
-   
 
-    
-    // xMax is the last date 
+
+    let years = data.map(function (item) {
+      return item.Year;
+    });
+
     let xMax = d3.max(years);
-    
-    
-    // scaleTIme() alligns the different dates with a scale of time
-    // so domain is the min year from yearsDate (above) and xMax is the maxDate(above)
+
     let xScale = d3
       .scaleLinear()
-      .domain([d3.min(years), xMax+1])
+      .domain([d3.min(years), xMax + 1])
       .range([0, width]);
-    
-      //for the bottom xAxis scaled to x
-    let xAxis = d3.axisBottom().scale(xScale);
-    
-    // appending the xAxis to the svgcontainer
-    //the transform property places it in the bottom center (60 is too push a bit too right, 400 is to be a the bottom)
+
+
+    let xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.format("d"));
+
+
     svgContainer
       .append('g')
       .call(xAxis)
       .attr('id', 'x-axis')
       .attr('transform', 'translate(60, 500)');
-    
-      // gets the gdp of each array
-    let GDP = data.data.map(function (item) {
-      return item[1];
-    });
 
-    let scaledGDP = [];
-   
-    //max gdp
-    let gdpMax = d3.max(GDP);
-    
-    //linearScale is a function which will return a gdp scaled to the height of the range. the reason why its 0 in the domain and not gdpmin is that so it the graph does not start completly flat 
-    let linearScale = d3.scaleLinear().domain([0, gdpMax]).range([0, height]);
-    
-    //we then map the GDP into linearScale which will return the heigest gdp to height 400 and then scale each other gdp to a smaller height
-    scaledGDP = GDP.map(function (item) {
-      return linearScale(item);
-    });
-    
+      let time = data.map(function (item) {
+        return item.Time.replace(/:/g,'.');
+      });
+
     //this is to scale the gdp on the yAxis
-    let yAxisScale = d3.scaleLinear().domain([0, gdpMax]).range([height, 0]);
-// scaling the d3 yaxis to the scale we just made above
-    let yAxis = d3.axisLeft(yAxisScale);
+    let yAxisScale = d3.scaleLinear().domain([d3.max(time), d3.min(time)]).range([height, 0]);
+    // scaling the d3 yaxis to the scale we just made above
+    let yAxis = d3.axisLeft().scale(yAxisScale);
 
     //appending the y axis to the svg (the translate 60 pushes it to the right)
     svgContainer
@@ -103,35 +82,31 @@ d3.json(
       .attr('id', 'y-axis')
       .attr('transform', 'translate(60, 0)');
 
-     //this is to add all the bars(rect) to the svg
-     //(d) is the data so the number and (i) is the index
+
+    //this is to add all the bars(rect) to the svg
+    //(d) is the data so the number and (i) is the index
     d3.select('svg')
-      .selectAll('rect')
-      .data(scaledGDP)// GDP scaled to the height of 400
+      .selectAll('circle')
+      .data(data)// GDP scaled to the height of 400
       .enter()
-      .append('rect')
-      .attr('data-date', function (d, i) {//sets the date as an attribute
-        return data.data[i][0];
+      .append('circle')
+      .attr('data-year', function (d, i) {//sets the date as an attribute
+
+        return data[i].Year;
       })
-      .attr('data-gdp', function (d, i) {// sets the gdp amount as an attribute
-        return data.data[i][1];
+      .attr('data-time', function (d, i) {// sets the gdp amount as an attribute
+        return data[i].Time;
       })
-      .attr('class', 'bar')
-      
+      .attr('class', 'circle')
       //pushes each rect a little bit more to the right with each change in year
-      .attr('x', function (d, i) {
-        return xScale(yearsDate[i]);
-      })
+      .attr('cx', function (d, i) {
       
-      //as y is calculated from the top right you want to push everything down to the bottom . so that is why you put height --
-      //and the -d is to stop pushing it down to much and have the  height of the data
-      .attr('y', function (d) {
-        return height - d;
+        return xScale(d.Year);
       })
-      .attr('width', barWidth)// defined on top as width / 275
-      .attr('height', function (d) {//adding more than d here will make it grow at te bottom bc again height is calculated from the top
-        return d;
+      .attr('cy', function (d) {
+        return yAxisScale(d.Time.replace(/:/g,'.'))
       })
+      .attr("r",8)
       .style('fill', '#33adff')
       .attr('transform', 'translate(60, 0)')//pushes graph a little right
       .on('mouseover', function (d, i) {
