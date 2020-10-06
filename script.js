@@ -53,8 +53,8 @@ d3.json(
 
     let xScale = d3
       .scaleLinear()
-      .domain([d3.min(years)-1, xMax + 1])
-      .range([0, width-30]);
+      .domain([d3.min(years) - 1, xMax + 1])
+      .range([0, width - 30]);
 
 
     let xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.format("d"));
@@ -66,12 +66,12 @@ d3.json(
       .attr('id', 'x-axis')
       .attr('transform', 'translate(60, 500)');
 
-      let time = data.map(function (item) {
-        return item.Time.replace(/:/g,'.');
-      });
+    let time = data.map(function (item) {
+      return item.Time.replace(/:/g, '.');
+    });
 
     //this is to scale the gdp on the yAxis
-    let yAxisScale = d3.scaleLinear().domain([d3.max(time), d3.min(time)]).range([height-10, 30]);
+    let yAxisScale = d3.scaleLinear().domain([d3.max(time), d3.min(time)]).range([height - 10, 30]);
     // scaling the d3 yaxis to the scale we just made above
     let yAxis = d3.axisLeft().scale(yAxisScale);
 
@@ -91,7 +91,7 @@ d3.json(
       .enter()
       .append('circle')
       .attr('data-year', function (d, i) {//sets the date as an attribute
-        console.log(data[i].Year)
+
         return data[i].Year;
       })
       .attr('data-time', function (d, i) {// sets the gdp amount as an attribute
@@ -100,40 +100,44 @@ d3.json(
       .attr('class', 'circle')
       //pushes each rect a little bit more to the right with each change in year
       .attr('cx', function (d, i) {
-      
+
         return xScale(d.Year);
       })
       .attr('cy', function (d) {
-        return yAxisScale(d.Time.replace(/:/g,'.'))
+        return yAxisScale(d.Time.replace(/:/g, '.'))
       })
-      .attr("r",5)
-      .style('fill', '#33adff')
+      .attr("r", 5)
+      .style('fill', function(d,i){
+        if (d.Doping!=''){
+          return '#c0392b'
+        }else return '#27ae60'
+      })
       .attr('transform', 'translate(60, 0)')//pushes graph a little right
       .on('mouseover', function (d, i) {
         tooltip.transition().duration(200).style('opacity', 0.9);
         tooltip
           .html(
-            data[i].Name+
-            ' ('+
-            data[i].Nationality+')'+ 
-            '<br />'+
-            data[i].Year+'<br />'+'time:'+
-            data[i].Time+
-            '<br />'+'<br />'+
+            data[i].Name +
+            ' (' +
+            data[i].Nationality + ')' +
+            '<br />' +
+            data[i].Year + '<br />' + 'time:' +
+            data[i].Time +
+            '<br />' + '<br />' +
             data[i].Doping
-      
-            
-           // '$' +// toFixed rounds to 1 number after decimal
-           // GDP[i].toFixed(1).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + //here the regex finds the first digit adds a comma after it then puts the other numbers and then adds billion 
-           // ' Billion'
+
+
+          
           )
-          .attr('data-date', data.data[i][0])
-          .style('left',xScale(d.Year));
-          .style('top',yAxisScale(d.Time.replace(/:/g,'.')) );
+
+        tooltip
+
+          .style('left', xScale(d.Year) + 90 + 'px')
+          .style('top', yAxisScale(d.Time.replace(/:/g, '.')) - 30 + 'px');
       })
       .on('mouseout', function () {
         tooltip.transition().duration(200).style('opacity', 0);
-        overlay.transition().duration(200).style('opacity', 0);
+
       });
   }
 );
