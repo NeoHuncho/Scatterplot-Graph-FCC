@@ -128,9 +128,8 @@ d3.json(
            // ' Billion'
           )
           .attr('data-date', data.data[i][0])
-          .style('left', i * barWidth + 30 + 'px')
-          .style('top', height - 100 + 'px')
-          .style('transform', 'translateX(60px)');
+          .style('left',xScale(d.Year));
+          .style('top',yAxisScale(d.Time.replace(/:/g,'.')) );
       })
       .on('mouseout', function () {
         tooltip.transition().duration(200).style('opacity', 0);
