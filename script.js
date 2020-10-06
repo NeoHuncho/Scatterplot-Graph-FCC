@@ -71,7 +71,7 @@ d3.json(
       });
 
     //this is to scale the gdp on the yAxis
-    let yAxisScale = d3.scaleLinear().domain([d3.max(time), d3.min(time)]).range([height-6, 30]);
+    let yAxisScale = d3.scaleLinear().domain([d3.max(time), d3.min(time)]).range([height-10, 30]);
     // scaling the d3 yaxis to the scale we just made above
     let yAxis = d3.axisLeft().scale(yAxisScale);
 
@@ -91,7 +91,7 @@ d3.json(
       .enter()
       .append('circle')
       .attr('data-year', function (d, i) {//sets the date as an attribute
-
+        console.log(data[i].Year)
         return data[i].Year;
       })
       .attr('data-time', function (d, i) {// sets the gdp amount as an attribute
@@ -110,23 +110,22 @@ d3.json(
       .style('fill', '#33adff')
       .attr('transform', 'translate(60, 0)')//pushes graph a little right
       .on('mouseover', function (d, i) {
-        overlay
-          .transition()
-          .duration(1)// time for white bar to appear on screen
-          .style('height', d + 'px')
-          .style('width', barWidth + 'px')
-          .style('opacity', 0.9)
-          .style('left', i * barWidth + 0 + 'px')
-          .style('top', height - d + 'px')
-          .style('transform', 'translateX(60px)');
         tooltip.transition().duration(200).style('opacity', 0.9);
         tooltip
           .html(
-            years[i] +
-            '<br>' +
-            '$' +// toFixed rounds to 1 number after decimal
-            GDP[i].toFixed(1).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + //here the regex finds the first digit adds a comma after it then puts the other numbers and then adds billion 
-            ' Billion'
+            data[i].Name+
+            ' ('+
+            data[i].Nationality+')'+ 
+            '<br />'+
+            data[i].Year+'<br />'+'time:'+
+            data[i].Time+
+            '<br />'+'<br />'+
+            data[i].Doping
+      
+            
+           // '$' +// toFixed rounds to 1 number after decimal
+           // GDP[i].toFixed(1).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + //here the regex finds the first digit adds a comma after it then puts the other numbers and then adds billion 
+           // ' Billion'
           )
           .attr('data-date', data.data[i][0])
           .style('left', i * barWidth + 30 + 'px')
