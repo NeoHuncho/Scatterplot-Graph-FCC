@@ -2,18 +2,12 @@ let width = 910,
   height = 500,
   barWidth = width / 275;
 
+
 //this is the little box than comes up when you put your mouse
 let tooltip = d3
   .select('.visHolder')
   .append('div')
   .attr('id', 'tooltip')
-  .style('opacity', 0);
-
-//this is the white bar that covers the blue line your are on
-let overlay = d3
-  .select('.visHolder')
-  .append('div')
-  .attr('class', 'overlay')
   .style('opacity', 0);
 
 //this is the main svg container
@@ -70,35 +64,33 @@ d3.json(
       return item.Time.replace(/:/g, '.');
     });
 
-    //this is to scale the gdp on the yAxis
     let yAxisScale = d3.scaleLinear().domain([d3.max(time), d3.min(time)]).range([height - 10, 30]);
-    // scaling the d3 yaxis to the scale we just made above
+  
     let yAxis = d3.axisLeft().scale(yAxisScale);
 
-    //appending the y axis to the svg (the translate 60 pushes it to the right)
+    
     svgContainer
       .append('g')
       .call(yAxis)
       .attr('id', 'y-axis')
       .attr('transform', 'translate(60, 0)');
 
-d3.select
-    //this is to add all the bars(rect) to the svg
-    //(d) is the data so the number and (i) is the index
+
+  
     d3.select('svg')
       .selectAll('circle')
-      .data(data)// GDP scaled to the height of 400
+      .data(data)
       .enter()
       .append('circle')
-      .attr('data-year', function (d, i) {//sets the date as an attribute
+      .attr('data-year', function (d, i) {
 
         return data[i].Year;
       })
-      .attr('data-time', function (d, i) {// sets the gdp amount as an attribute
+      .attr('data-time', function (d, i) {
         return data[i].Time;
       })
       .attr('class', 'circle')
-      //pushes each rect a little bit more to the right with each change in year
+     
       .attr('cx', function (d, i) {
 
         return xScale(d.Year);
@@ -106,13 +98,15 @@ d3.select
       .attr('cy', function (d) {
         return yAxisScale(d.Time.replace(/:/g, '.'))
       })
-      .attr("r", 5)
+      .attr("r", 6)
       .style('fill', function(d,i){
         if (d.Doping!=''){
           return '#c0392b'
         }else return '#27ae60'
       })
-      .attr('transform', 'translate(60, 0)')//pushes graph a little right
+      .style('fill-opacity','90%')
+      .style('stroke','black')
+      .attr('transform', 'translate(60, 0)')
       .on('mouseover', function (d, i) {
         tooltip.transition().duration(200).style('opacity', 0.9);
         tooltip
@@ -141,37 +135,11 @@ d3.select
 
 
       });
-      var legendContainer = svg.append('g').attr('id', 'legend');
-      
-      var legend = legendContainer
-        .selectAll('#legend')
-        .data(color.domain())
-        .enter()
-        .append('g')
-        .attr('class', 'legend-label')
-        .attr('transform', function(d, i) {
-          return 'translate(0,' + (height / 2 - i * 20) + ')';
-        });
-      
-      legend
-        .append('rect')
-        .attr('x', width - 18)
-        .attr('width', 18)
-        .attr('height', 18)
-        .style('fill', color);
-      
-      legend
-        .append('text')
-        .attr('x', width - 24)
-        .attr('y', 9)
-        .attr('dy', '.35em')
-        .style('text-anchor', 'end')
-        .text(function(d) {
-            if (d) {
-              return 'Riders with doping allegations';
-            } else {
-              return 'No doping allegations';
-            }})
+     svgContainer.append("circle").attr("cx",950).attr("cy",129).attr("r", 6).style("fill", "#27ae60")
+     svgContainer.append("circle").attr("cx",950).attr("cy",159).attr("r", 6).style("fill", "#c0392b")
+     svgContainer.append("text").attr("x", 794).attr("y", 130).text("No doping allegations").style("font-size", "15px").attr("alignment-baseline","middle")
+     svgContainer.append("text").attr("x", 740).attr("y", 160).text("Riders with doping allegations").style("font-size", "15px").attr("alignment-baseline","middle")
+  
       
   }
 );
