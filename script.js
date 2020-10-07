@@ -1,4 +1,4 @@
-let width = 900,
+let width = 910,
   height = 500,
   barWidth = width / 275;
 
@@ -82,7 +82,7 @@ d3.json(
       .attr('id', 'y-axis')
       .attr('transform', 'translate(60, 0)');
 
-
+d3.select
     //this is to add all the bars(rect) to the svg
     //(d) is the data so the number and (i) is the index
     d3.select('svg')
@@ -138,6 +138,40 @@ d3.json(
       .on('mouseout', function () {
         tooltip.transition().duration(200).style('opacity', 0);
 
+
+
       });
+      var legendContainer = svg.append('g').attr('id', 'legend');
+      
+      var legend = legendContainer
+        .selectAll('#legend')
+        .data(color.domain())
+        .enter()
+        .append('g')
+        .attr('class', 'legend-label')
+        .attr('transform', function(d, i) {
+          return 'translate(0,' + (height / 2 - i * 20) + ')';
+        });
+      
+      legend
+        .append('rect')
+        .attr('x', width - 18)
+        .attr('width', 18)
+        .attr('height', 18)
+        .style('fill', color);
+      
+      legend
+        .append('text')
+        .attr('x', width - 24)
+        .attr('y', 9)
+        .attr('dy', '.35em')
+        .style('text-anchor', 'end')
+        .text(function(d) {
+            if (d) {
+              return 'Riders with doping allegations';
+            } else {
+              return 'No doping allegations';
+            }})
+      
   }
 );
