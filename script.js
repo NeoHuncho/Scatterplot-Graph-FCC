@@ -135,8 +135,8 @@ d3.json(
 
 
       });
-     svgContainer.append("circle").attr("cx",950).attr("cy",129).attr("r", 6).style("fill", "#27ae60")
-     svgContainer.append("circle").attr("cx",950).attr("cy",159).attr("r", 6).style("fill", "#c0392b")
+     svgContainer.append("circle").attr("cx",950).attr("cy",129).attr("r", 6).style("fill", "#27ae60").style('stroke','black')
+     svgContainer.append("circle").attr("cx",950).attr("cy",159).attr("r", 6).style("fill", "#c0392b").style('stroke','black')
      svgContainer.append("text").attr("x", 794).attr("y", 130).text("No doping allegations").style("font-size", "15px").attr("alignment-baseline","middle")
      svgContainer.append("text").attr("x", 740).attr("y", 160).text("Riders with doping allegations").style("font-size", "15px").attr("alignment-baseline","middle")
   
